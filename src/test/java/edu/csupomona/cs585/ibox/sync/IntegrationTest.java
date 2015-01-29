@@ -17,7 +17,6 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.api.services.drive.model.File;
 
 public class IntegrationTest {
 
@@ -35,6 +34,7 @@ public class IntegrationTest {
 		fileSync = null;
 	}
 
+	@Test
 	public void initGoogleDriveServices() throws IOException {
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = new JacksonFactory();
@@ -54,9 +54,27 @@ public class IntegrationTest {
         }
 
     }
+	
 	@Test
-	public void testAddFile(){
-		
+	public void testAddFile() throws IOException {
+		java.io.File localFile = new java.io.File("test.txt");
+		localFile.createNewFile();
+		fileSync.addFile(localFile);
+		assertNotNull(fileSync.getFileId(localFile.getName()));
+	}
+	
+	@Test
+	public void testUpdateFile() throws IOException {
+		java.io.File localFile = new java.io.File("test.txt");
+		fileSync.updateFile(localFile);
+		assertNotNull(fileSync.getFileId(localFile.getName()));
+	}
+	
+	@Test
+	public void testDeleteFile() throws IOException {
+		java.io.File localFile = new java.io.File("test.txt");
+		fileSync.deleteFile(localFile);
+		assertNotNull(fileSync.getFileId(localFile.getName()));
 	}
 
 }

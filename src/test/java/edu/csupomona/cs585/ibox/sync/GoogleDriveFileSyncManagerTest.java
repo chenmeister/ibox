@@ -1,7 +1,5 @@
 package edu.csupomona.cs585.ibox.sync;
 
-import static org.junit.Assert.*;
-
 //import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,6 +74,7 @@ public class GoogleDriveFileSyncManagerTest {
 		deleteInstance = null;
 	}
 	
+	//helper method to initialize testFile for update and delete test 
 	public void initalizeFiles(){
 		File testFile = new File();
 		testFile.setId("TestFile");
@@ -87,54 +86,56 @@ public class GoogleDriveFileSyncManagerTest {
 
 	@Test
 	public void testAddFile() throws IOException {
-		//initalize all the variables
+		//initialize all the variables
+		File addFile = new File();
+		addFile.setId("Test Add");
 		Mockito.when(mockDrive.files()).thenReturn(getFiles);
 		Mockito.when(getFiles.insert(Mockito.isA(File.class), 
 				Mockito.isA(AbstractInputStreamContent.class))).thenReturn(addInstance);
 		Mockito.when(addInstance.execute()).thenReturn(body);
-
+		Mockito.when(addInstance.execute()).thenReturn(addFile);
+		
+		//run the addFile function
 		fileSync.addFile(localFile);
 		
 		//verify the variables
 		Mockito.verify(mockDrive, Mockito.atLeastOnce()).files();
 	    Mockito.verify(getFiles, Mockito.atLeast(0)).insert(Mockito.isA(File.class));
 	    Mockito.verify(addInstance, Mockito.atLeastOnce()).execute();
+	    Mockito.verify(mockDrive).files();
 	}
 
 	@Test
 	public void testUpdateFile() throws IOException {
-		initalizeFiles();
 		
+		//initialize all the variables
+		initalizeFiles();
 		Mockito.when(localFile.getName()).thenReturn("test.txt");
 		Mockito.when(mockDrive.files()).thenReturn(getFiles);
 		Mockito.when(getFiles.list()).thenReturn(getList);
 		Mockito.when(getList.execute()).thenReturn(listOfFiles);
 		
+		//get the file id
 		String fileId = fileSync.getFileId("test.txt");
 		
+		//check if File Id is updated
 		Mockito.when(getFiles.update(Mockito.eq(fileId),
 				Mockito.isA(File.class), Mockito.isA(AbstractInputStreamContent.class))).thenReturn(updateInstance);
-
 		Mockito.when(updateInstance.execute()).thenReturn(body);
 		
+		//run the updateFile command
 		fileSync.updateFile(localFile);
 	
+		//verify the results
 		Mockito.verify(mockDrive, Mockito.atLeastOnce()).files();
 	    Mockito.verify(getFiles, Mockito.atLeast(0)).update(Mockito.eq(fileId), Mockito.isA(File.class));
 	    Mockito.verify(updateInstance, Mockito.atLeastOnce()).execute();
 	}
 	
-	@Test(expected = Exception.class)
-	public void testUpdateFileExecption() throws IOException {
-		Mockito.when(localFile.getName()).thenReturn(null);
-		fileSync.updateFile(localFile);
-		assertNull(localFile);
-	}
-	
-	
 	@Test
 	public void testDeleteFile() throws IOException {
 		
+		//
 		initalizeFiles();
 		
 		Mockito.when(localFile.getName()).thenReturn("test.txt");
