@@ -50,7 +50,6 @@ public class WatchDirTest {
 	@Test
 	public void testProcessEvents() {
 		timer.schedule(new RunProcessEvents(), 100000);
-		
 	}
 	
 	class RunProcessEvents extends TimerTask {

@@ -22,11 +22,13 @@ public class IntegrationTest {
 
 	Drive googleDriveClient;
 	GoogleDriveFileSyncManager fileSync;
-	
+	java.io.File localFile;
+
 	@Before
 	public void setUp() throws Exception {
 		initGoogleDriveServices();
 		fileSync = new GoogleDriveFileSyncManager(googleDriveClient);
+		localFile = new java.io.File("test.txt");
 	}
 
 	@After
@@ -57,7 +59,6 @@ public class IntegrationTest {
 	
 	@Test
 	public void testAddFile() throws IOException {
-		java.io.File localFile = new java.io.File("test.txt");
 		localFile.createNewFile();
 		fileSync.addFile(localFile);
 		assertNotNull(fileSync.getFileId(localFile.getName()));
@@ -65,14 +66,12 @@ public class IntegrationTest {
 	
 	@Test
 	public void testUpdateFile() throws IOException {
-		java.io.File localFile = new java.io.File("test.txt");
 		fileSync.updateFile(localFile);
 		assertNotNull(fileSync.getFileId(localFile.getName()));
 	}
 	
 	@Test
 	public void testDeleteFile() throws IOException {
-		java.io.File localFile = new java.io.File("test.txt");
 		fileSync.deleteFile(localFile);
 		assertNotNull(fileSync.getFileId(localFile.getName()));
 	}

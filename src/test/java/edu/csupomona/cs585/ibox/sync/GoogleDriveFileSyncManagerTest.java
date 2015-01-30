@@ -123,6 +123,8 @@ public class GoogleDriveFileSyncManagerTest {
 				Mockito.isA(File.class), Mockito.isA(AbstractInputStreamContent.class))).thenReturn(updateInstance);
 		Mockito.when(updateInstance.execute()).thenReturn(body);
 		
+		File testFile2 = new File();
+		Mockito.when(updateInstance.execute()).thenReturn(testFile2);
 		//run the updateFile command
 		fileSync.updateFile(localFile);
 	
